@@ -89,7 +89,7 @@ class EmployeeResource extends Resource
                 Forms\Components\TextInput::make('last_name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('middle_name')
+                Forms\Components\TextInput::make('second_name')
                     ->required()
                     ->maxLength(255)
                  ])->columns(3),
@@ -112,8 +112,11 @@ class EmployeeResource extends Resource
         
                  ->schema([
                     Forms\Components\DatePicker::make('date_of_birth')
+                    ->native(false)
+                    ->displayFormat('d/m/Y')
                     ->required(),
                 Forms\Components\DatePicker::make('date_hired')
+                    ->native(false)
                     ->required()
                  ])->columns(2)
             
