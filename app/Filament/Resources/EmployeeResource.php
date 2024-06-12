@@ -7,10 +7,11 @@ use App\Models\City;
 use Filament\Tables;
 use App\Models\State;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
+
 use App\Models\Employee;
 
 use Filament\Forms\Form;
-
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Illuminate\Support\Collection;
@@ -37,26 +38,43 @@ class EmployeeResource extends Resource
                     ->searchable()
                      ->preload()
                      ->live()
+                       ->afterStateUpdated(function (Set $set) {
+                                $set('state_id', null);
+                                $set('city_id', null);
+                            })
                       ->required(),
+
                       Forms\Components\Select::make('state_id')
                           ->options(fn (Get $get): Collection => State::query()
                                 ->where('country_id', $get('country_id'))
                                 ->pluck('name', 'id'))
                       ->searchable()
                        ->preload()
+                       ->live()
+                       ->afterStateUpdated(fn (Set $set) => $set('city_id', null))
                         ->required(),
+
                         Forms\Components\Select::make('city_id')
-                          ->options(fn (Get $get): Collection => City::query()
-                           ->where('state_id', $get('state_id'))
-                            ->pluck('name', 'id'))
-                     ->searchable()
-                         ->preload()
-                          ->required(),
+                        ->options(function (Get $get): Collection {
+                            $stateId = $get('state_id');
+                            return City::query()
+                                ->where('state_id', $stateId)
+                                ->pluck('name', 'id');
+                        })
+                       
+                        ->searchable()
+                        ->preload()
+                        ->required(),
+
+
                           Forms\Components\Select::make('department_id')
                           ->relationship(name:'department',titleAttribute:'name')
                           ->searchable()
                            ->preload()
                             ->required(),
+
+
+
                  ])->columns(2)
                  ,
 
