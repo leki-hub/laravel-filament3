@@ -2,16 +2,22 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\EmployeeResource\Pages;
-use App\Filament\Resources\EmployeeResource\RelationManagers;
-use App\Models\Employee;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use App\Models\City;
 use Filament\Tables;
+use App\Models\State;
+use Filament\Forms\Get;
+use App\Models\Employee;
+
+use Filament\Forms\Form;
+
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\EmployeeResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\EmployeeResource\RelationManagers;
 
 class EmployeeResource extends Resource
 {
@@ -23,34 +29,59 @@ class EmployeeResource extends Resource
     {
         return $form
             ->schema([
+                 Forms\Components\Section::make('Country Details')
+                 ->description('Put the country details here.')
+                 ->schema([
+                     Forms\Components\Select::make('country_id')
+                    ->relationship(name:'country',titleAttribute:'name')
+                    ->searchable()
+                     ->preload()
+                     ->live()
+                      ->required(),
+                      Forms\Components\Select::make('state_id')
+                          ->options(fn (Get $get): Collection => State::query()
+                                ->where('country_id', $get('country_id'))
+                                ->pluck('name', 'id'))
+                      ->searchable()
+                       ->preload()
+                        ->required(),
+                        Forms\Components\Select::make('city_id')
+                          ->options(fn (Get $get): Collection => City::query()
+                           ->where('state_id', $get('state_id'))
+                            ->pluck('name', 'id'))
+                     ->searchable()
+                         ->preload()
+                          ->required(),
+                          Forms\Components\Select::make('department_id')
+                          ->relationship(name:'department',titleAttribute:'name')
+                          ->searchable()
+                           ->preload()
+                            ->required(),
+                 ])->columns(2)
+                 ,
+
+
                  Forms\Components\Section::make('USER NAME')
                  ->description('Put the user name details here.')
                  ->schema([
-                    Forms\Components\TextInput::make('country_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('state_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('city_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('department_id')
-                    ->required()
-                    ->numeric(),
+            
                 Forms\Components\TextInput::make('first_name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('second_name')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('last_name')
                     ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('middle_name')
+                    ->required()
                     ->maxLength(255)
-                 ])->columns(3)
-                 ,
+                 ])->columns(3),
+
+
+
+
+
                  Forms\Components\Section::make('ADDRESS DETAILS')
-                 ->description('Enter address details')
+                 
                  ->schema([
                     Forms\Components\TextInput::make('address')
                     ->required()
@@ -60,7 +91,7 @@ class EmployeeResource extends Resource
                     ->maxLength(255),
                  ])->columns(2),
                  Forms\Components\Section::make('DATE OF BIRTH')
-                 ->description('Enter dob details')
+        
                  ->schema([
                     Forms\Components\DatePicker::make('date_of_birth')
                     ->required(),
