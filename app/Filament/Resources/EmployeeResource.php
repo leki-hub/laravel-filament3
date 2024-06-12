@@ -61,7 +61,7 @@ class EmployeeResource extends Resource
                                 ->where('state_id', $stateId)
                                 ->pluck('name', 'id');
                         })
-                       
+                        // ->relationship(name:'state',titleAttribute:'name')
                         ->searchable()
                         ->preload()
                         ->required(),
