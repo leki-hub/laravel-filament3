@@ -15,6 +15,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Illuminate\Support\Collection;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\EmployeeResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -61,7 +62,6 @@ class EmployeeResource extends Resource
                                 ->where('state_id', $stateId)
                                 ->pluck('name', 'id');
                         })
-                        // ->relationship(name:'state',titleAttribute:'name')
                         ->searchable()
                         ->preload()
                         ->required(),
@@ -170,7 +170,8 @@ class EmployeeResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('Department')
+                ->relationship('department', 'name')
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
