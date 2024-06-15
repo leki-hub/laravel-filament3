@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\CountryResource\RelationManagers\EmployeesRelationManager;
 use Filament\Forms;
 use App\Models\City;
 use Filament\Tables;
@@ -172,6 +173,8 @@ class EmployeeResource extends Resource
             ->filters([
                 SelectFilter::make('Department')
                 ->relationship('department', 'name')
+                ->searchable()
+                ->preload()
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -187,7 +190,7 @@ class EmployeeResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+          
         ];
     }
 
