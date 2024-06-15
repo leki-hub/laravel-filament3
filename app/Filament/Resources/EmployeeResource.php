@@ -21,13 +21,31 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\EmployeeResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\EmployeeResource\RelationManagers;
+use Illuminate\Database\Eloquent\Model;
 
 class EmployeeResource extends Resource
 {
     protected static ?string $model = Employee::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
+    protected static ?string $recordTitleAttribute = 'first_name';
     protected static ?string $navigationGroup= 'Employee Management';
+// Below are a predefined methods/function for global search, can overwrite the above $recordtitleAttribute
+    public static function getGlobalSearchResultsTitle(Model $record): string
+    {
+        return $record->last_name;
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['first_name', 'second_name', 'last_name'];
+    }
+//  navigation 
+public static function getNavigationBadge():?string
+{
+    return static::getModel()::count();
+}
+    
     public static function form(Form $form): Form
     {
         return $form
