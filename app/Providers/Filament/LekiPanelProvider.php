@@ -36,6 +36,9 @@ class LekiPanelProvider extends PanelProvider
                 'warning' => Color::Orange,
             ])
             ->font('inter')
+            ->navigationGroups([
+                'Employee Management','System Management','User Management'
+            ])
             ->favicon(asset('images/logo.png'))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
